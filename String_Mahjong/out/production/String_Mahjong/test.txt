@@ -1,0 +1,53 @@
+九莲宝灯：
+s1,s1,s1,s2,s3,s4,s5,s5,s6,s7,s8,s9,s9,s9
+绿一色：
+s2,s2,s2,s3,s3,s4,s4,s4,s6,s6,s6,s8,s8,s8
+大三元：
+z,z,z,b,b,b,f,f,f,w2,w3,w4,s8,s8
+大四喜：
+e,e,e,s,s,s,w,w,w,n,n,n,t3,t3
+四暗刻：
+w4,w4,w4,s2,s2,s2,s5,s5,s5,t7,t7,t7,e,e
+字一色：
+e,e,e,w,w,w,n,n,n,b,b,b,z,z  ||  e,e,w,w,w,z,z,z,f,f,f,b,b,b
+连七对：
+s2,s2,s3,s3,s4,s4,s5,s5,s6,s6,s7,s7,s8,s8
+大七星：
+e,e,s,s,w,w,n,n,z,z,f,f,b,b
+十三幺：
+e,s,w,n,z,f,b,w1,w9,s1,s9,t1,t9,t9
+小三元：
+
+小四喜：
+
+屁胡1：
+s,s,w1,w2,w3,s5,s5,s5,s6,s7,s8,t4,t5,t6
+屁胡2：
+w1,w2,w3,w4,w5,w6,t1,t2,t3,s2,s3,s4,s7,s7
+
+平胡4：
+w2,w3,w4,w5,w6,w7,s2,s3,s4,s5,s6,s7,t3,t3
+屁胡5：
+
+屁胡6：
+
+一色三步高（ABBCCCDDE牌型）：
+w1,w2,w2,w3,w3,w3,w4,w4,w5,w7,w7,s1,s2,s3
+
+黏着式一杯口（ABBBCCCDD牌型）：
+w1,w2,w2,w2,w3,w3,w3,w4,w4,s6,s7,s8,s9,s9
+
+连山遍野（AABBCCC牌型）：
+w1,w2,w3,s2,s2,s2,s6,s6,s6,s7,s7,s8,s8,s8
+
+四归一：
+w4,w5,w5,w5,w5,w6,s1,s2,s3,s7,s7,s7,t3,t3
+
+大江大河（两组四归一）：
+w2,w3,w3,w3,w3,w4,s1,s2,s2,s2,s2,s3,t5,t5
+
+1. 碰牌、杠牌、吃牌机制；
+2. do-while循环重开一局麻将；
+3. 将麻将手牌输出为txt文件的字符串，然后用python脚本生成的exe文件读取，进行役种番种判定。
+4. 多人游戏机制（画大饼）
+
