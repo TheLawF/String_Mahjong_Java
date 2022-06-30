@@ -23,7 +23,7 @@ public class String_Mahjong {
         {
             Object[] options = {"OK","CANCEL"};
             JOptionPane.showOptionDialog(null,"您还没有输入","提示",JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.WARNING_MESSAGE,null,options,options[0]);
+            JOptionPane.WARNING_MESSAGE,null,options,options[0]);
         }
     }
 
@@ -53,12 +53,7 @@ public class String_Mahjong {
         Font type2 = new Font("黑体", Font.BOLD, 40);
         Font type3 = new Font("思源宋体", Font.BOLD, 80);
 
-        jf.setSize(d2);
-        jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        jf.setLocation(100, 100);
-        jf.setVisible(true);
 
-        String card = " ";
         //游戏最大的循环——重新开始游戏的循环在代码主体最前端进行。
         //The largest loop -- restart loop begins here.
         do {
@@ -71,7 +66,7 @@ public class String_Mahjong {
             String[] wind = {"🀀", "🀁", "🀂", "🀃", "🀀", "🀁", "🀂", "🀃", "🀀", "🀁", "🀂", "🀃", "🀀", "🀁", "🀂", "🀃"};
             String[] arrow = {"🀄", "🀅", "🀆", "🀄", "🀅", "🀆", "🀄", "🀅", "🀆", "🀄", "🀅", "🀆"};
 
-            int round = -1; // 麻将的回合数 The rounds of the mahjong game.
+            int round = 0; // 麻将的回合数 The rounds of the mahjong game.
 
             /* wall是麻将的自摸墙
               The variable "wall" is all the shuffled mahjong cards for players
@@ -112,6 +107,7 @@ public class String_Mahjong {
             banker.owned.sort(Comparator.naturalOrder());
             south.owned.sort(Comparator.naturalOrder());
             // String name = JOptionPane.showInputDialog("请输入一个昵称，然后开始游戏：");
+
 
             // 初始化设定游戏重开的按钮和结束游戏的按钮
             JButton restart = new JButton("再来一局");
@@ -204,7 +200,10 @@ public class String_Mahjong {
                 commandButtons.add(passButton);
                 commandButtons.add(cheatButton);
 
-                jf.repaint();
+                jf.setSize(d2);
+                jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                jf.setLocation(100, 100);
+                jf.setVisible(true);
 
                 boolean buttonCalling = true;
 
@@ -225,6 +224,7 @@ public class String_Mahjong {
 
                 });
                 gangButton.addActionListener(e -> {
+                    String c = "g";
                     panel.updateUI();
                     jf.repaint();
                 });
@@ -243,51 +243,19 @@ public class String_Mahjong {
                     jf.repaint();
                 });
 
-                get : while (banker.loopCalling) {
+                while (banker.loopCalling) {
                     /* 鸣牌循环内嵌套的while循环叫做“玩家暗杠循环”，在这个循环中将会循环
                     判定玩家的摸牌和暗杠，如果玩家暗杠则continue到暗杠循环开头部分再摸一张，
                     否则跳出暗杠循环，进入别家鸣牌判定代码块。
                     【玩家暗杠由玩家内部的 gangLoop 变量进行判断】
                     */
                     banker.getCard(wall, banker.owned);
-                    card = banker.getName(wall, banker.owned);
 
-                    Tools tools = new Tools();
-                    int result;
-                    boolean isPlus = false;
-                    for (String each : banker.owned) {
-                        result = tools.countListRepeatedStrings(banker.owned, each);
-
-                        for (String str : banker.peng) {
-                            if (Objects.equals(str.substring(0, 1), each)) {
-                                isPlus = true;
-                                break;
-                            }
-                        }
-
-                        if (result == 4) {
-                            int jop = JOptionPane.showConfirmDialog(null,"是否暗杠："+each,
-                                    "杠牌提示",JOptionPane.YES_NO_CANCEL_OPTION);
-                            if (jop == 0) {
-                                banker.anGangCalling(each);
-                                continue get;
-                            }
-                            else {
-                                break;
-                            }
-                        }
-                        if (isPlus) {
-                            int jop = JOptionPane.showConfirmDialog(null,"是否加杠："+each,
-                                    "杠牌提示",JOptionPane.YES_NO_CANCEL_OPTION);
-                            if (jop == 0) {
-                                banker.gangPlus(each);
-                                continue get;
-                            }
-                            else {
-                                break;
-                            }
-                        }
+                    /*
+                    for (String card : banker.owned) {
+                        banker.gangCalling(card);
                     }
+                    */
 
                     if (!banker.gangLoop) {
                         // System.out.println("gangloop?");
@@ -295,8 +263,6 @@ public class String_Mahjong {
                     }
 
                 }
-                banker.loopCalling = true;
-
                 JButton[] buttonArr = new JButton[banker.owned.size()];     // 按钮数组
                 for (int i = 0; i < banker.owned.size(); i++) {
                     buttonArr[i] = new JButton(banker.owned.get(i));
@@ -325,8 +291,6 @@ public class String_Mahjong {
                 panel.add(gangButton, BorderLayout.SOUTH);
                 panel.add(passButton, BorderLayout.SOUTH);
                 panel.add(cheatButton, BorderLayout.SOUTH);
-                panel.updateUI();
-                jf.repaint();
 
                 /*
                  * 如果余家的弃牌堆列表的长度不为零，则调用本家的鸣牌判定函数，传入余家
@@ -375,7 +339,6 @@ public class String_Mahjong {
                                 panel.updateUI();
                                 jf.repaint();
                                 ifButtonPressed = false;
-                                jButton.setSelected(false);
                                 break;
                             }else if (pengButton.getModel().isArmed()) {
                                 panel.updateUI();
@@ -396,13 +359,6 @@ public class String_Mahjong {
                                 jf.repaint();
                                 ifButtonPressed = false;
                                 banker.playing = false;
-
-                                south.loopCalling = false;
-                                south.ifCalling = true;
-                                west.loopCalling = false;
-                                west.ifCalling = true;
-                                north.loopCalling = false;
-                                north.ifCalling = false;
                                 break;
                             }
                         }
@@ -410,7 +366,7 @@ public class String_Mahjong {
 
                     } while (ifButtonPressed);
 
-                    jf.repaint();
+                    jf.setSize(d);
                     banker.abandonCard(ref);
                     /* 此为余家鸣牌的情况，如果余家只是碰牌，即 loopCalling == false 的时候
                     那么代码不经过南家的暗杠循环，直接进入南家的弃牌及别家鸣牌判定的代码块；如果
@@ -435,17 +391,18 @@ public class String_Mahjong {
                     // 庄家摸牌，并进行暗杠和加杠判定，判定有效则继续玩家鸣牌循环。
 
                     south.getCard(wall, south.owned);
-
+                    for (String card : south.owned) {
+                        south.gangCalling(card);
+                    }
                     if (!south.gangLoop) {
                         break;
                     }
                 }
-                south.loopCalling = true;
-
                 txt = " ";
                 if (!banker.ifCalling && !west.ifCalling && !north.ifCalling) {
                     // 南家弃牌
                     south.abandonCardAI();
+                    Scanner scanner = new Scanner(System.in);
                     String s_abandoned = south.abandonArea.get(south.abandonArea.size() - 1);
 
                     /* 按钮鸣牌循环及其余几家的鸣牌判定，包括庄家在内。如果南家弃牌和庄家手里的牌
@@ -456,215 +413,202 @@ public class String_Mahjong {
 
                     Tools tools = new Tools();
                     int result = tools.countListRepeatedStrings(banker.owned, s_abandoned);
-                    if (result == 2) {
-                        jf.repaint();
-
+                    if (result >= 2 && banker.owned.contains(s_abandoned)) {
+                        boolean ifButtonPressed = true;
                         int jop = JOptionPane.showConfirmDialog(null,"是否碰牌："+s_abandoned,"碰牌提示",
                                 JOptionPane.YES_NO_CANCEL_OPTION);
                         if (jop == 0){
-                            panel.updateUI();
-                            banker.pengCalling(s_abandoned);
-                            banker.loopCalling = false;
+                            do {
+                                for (JButton jButton : buttonArr) {
+                                    if (jButton.getModel().isArmed()) {
+                                        ref = jButton.getText();
+                                        panel.removeAll();
+                                        panel.updateUI();
+                                        jf.repaint();
+                                        ifButtonPressed = false;
+                                        break;
+                                    }
+                                }
 
-                            west.loopCalling = false;
-                            west.ifCalling = true;
-                            north.loopCalling = false;
-                            north.ifCalling = true;
+                            } while (ifButtonPressed);
+                            banker.pengCalling(s_abandoned);
+                            banker.abandonCard(ref);
                         }
+                        else if (jop == 1 || jop == 2){
+                            do {
+                                for (JButton jButton : buttonArr) {
+                                    if (jButton.getModel().isArmed()) {
+                                        ref = jButton.getText();
+                                        panel.removeAll();
+                                        panel.updateUI();
+                                        jf.repaint();
+                                        ifButtonPressed = false;
+                                        System.out.println(",,,,");
+                                        break;
+                                    }
+                                }
+                            } while (ifButtonPressed);
+                            banker.abandonCard(ref);
+                        }
+                        jf.setSize(d2);
+                        jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                        jf.setLocation(100, 100);
+                        jf.setVisible(true);
+                        jf.remove(label);
 
                     }
-                    else if (result > 2 && banker.owned.contains(s_abandoned))
-                    {
-                        Object[] options = {"碰","杠","和","跳过"};
-                        int jop = JOptionPane.showOptionDialog(null,"是否鸣牌："+s_abandoned,
-                                "碰杠和提示", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,
-                                null,options, options[0]);
-
-                        if (jop == 0){
-                            panel.updateUI();
-                            banker.pengCalling(s_abandoned);
-                            banker.loopCalling = false;
-
-                            west.loopCalling = false;
-                            west.ifCalling = true;
-                            north.loopCalling = false;
-                            north.ifCalling = true;
-                        }
-                        else if (jop == 1) {
-                            banker.gangCalling(s_abandoned);
-                            panel.updateUI();
-                            west.loopCalling = false;
-                            west.ifCalling = true;
-                            north.loopCalling = false;
-                            north.ifCalling = true;
-                        }
-                        else if (jop == 2) {
-                            banker.playing = false;
-                            west.loopCalling = false;
-                            west.ifCalling = true;
-                            north.loopCalling = false;
-                            north.ifCalling = true;
-                        }
-                        else {
-                            panel.updateUI();
-                        }
-                    }
-
+                    //banker.cardCalling(s_abandoned, String.valueOf(command));
+                    west.cardCallingAI();
+                    north.cardCallingAI();
+                    System.out.println("南家已出牌");
                 }
-                south.ifCalling = false;
 
                 // 西家的鸣牌循环
                 while (west.loopCalling) {
                     west.getCardAI(wall, west.owned);
-
+                    for (String card : west.owned) {
+                        west.gangCalling(card);
+                    }
                     if (!west.gangLoop) {
                         break;
                     }
                 }
-                west.loopCalling = true;
-
-                if (!west.ifCalling) {
+                if (!banker.ifCalling && !south.ifCalling && !north.ifCalling) {
                     west.abandonCardAI();
                     String w_abandoned = west.abandonArea.get(west.abandonArea.size() - 1);
-
+                    /*
+                    south.cardCalling(banker.abandonArea.get(banker.abandonArea.size() - 1));
+                    banker.cardCalling(banker.abandonArea.get(banker.abandonArea.size() - 1));
+                    north.cardCalling(banker.abandonArea.get(banker.abandonArea.size() - 1));
+                     */
                     Tools tools = new Tools();
                     int result = tools.countListRepeatedStrings(banker.owned, w_abandoned);
-                    if (result == 2) {
+                    if (result >= 2) {
                         boolean ifButtonPressed = true;
-                        String ref_w;
                         int jop = JOptionPane.showConfirmDialog(null,"是否碰牌："+w_abandoned,"碰牌提示",
                                 JOptionPane.YES_NO_CANCEL_OPTION);
                         if (jop == 0){
-                            panel.updateUI();
+                            do {
+                                for (JButton jButton : buttonArr) {
+                                    if (jButton.getModel().isArmed()) {
+                                        ref = jButton.getText();
+                                        panel.removeAll();
+                                        panel.updateUI();
+                                        jf.repaint();
+                                        ifButtonPressed = false;
+                                        System.out.println(",,,,");
+                                        break;
+                                    }
+                                }
+
+                            } while (ifButtonPressed);
                             banker.pengCalling(w_abandoned);
-                            banker.loopCalling = false;
-
-                            north.loopCalling = false;
-                            north.ifCalling = true;
+                            banker.abandonCard(ref);
                         }
-
-
-                    }else if (result > 2 && banker.owned.contains(w_abandoned))
-                    {
-                        Object[] options = {"碰","杠","和","跳过"};
-                        int jop = JOptionPane.showOptionDialog(null,"是否鸣牌："+w_abandoned,
-                                "碰杠和提示", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,
-                                null,options, options[0]);
-
-                        if (jop == 0){
-                            panel.updateUI();
-                            banker.pengCalling(w_abandoned);
-                            banker.loopCalling = false;
-
-                            north.loopCalling = false;
-                            north.ifCalling = true;
+                        else if (jop == 1 || jop == 2){
+                            do {
+                                for (JButton jButton : buttonArr) {
+                                    if (jButton.getModel().isArmed()) {
+                                        ref = jButton.getText();
+                                        panel.removeAll();
+                                        panel.updateUI();
+                                        jf.repaint();
+                                        ifButtonPressed = false;
+                                        break;
+                                    }
+                                }
+                            } while (ifButtonPressed);
+                            banker.abandonCard(ref);
                         }
-                        else if (jop == 1) {
-                            banker.gangCalling(w_abandoned);
-                            panel.updateUI();
-                            north.loopCalling = false;
-                            north.ifCalling = true;
-                        }
-                        else if (jop == 2) {
-                            banker.playing = false;
-                            north.loopCalling = false;
-                            north.ifCalling = true;
-                        }
-                        else {
-                            panel.updateUI();
-                        }
+                        jf.setSize(d2);
+                        jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                        jf.setLocation(100, 100);
+                        jf.setVisible(true);
+                        jf.remove(label);
                     }
 
                     // banker.cardCalling(w_abandoned, String.valueOf(command));
-
+                    south.cardCallingAI();
+                    north.cardCallingAI();
+                    System.out.println("西家已出牌");
                 }
-                west.ifCalling = false;
 
                 // 北家的鸣牌循环
                 while (north.loopCalling) {
                     north.getCard(wall, north.owned);
-
+                    for (String card : north.owned) {
+                        north.gangCalling(card);
+                    }
                     if (!north.gangLoop) {
                         break;
                     }
                 }
-                north.loopCalling = true;
-
-                if (!north.ifCalling) {
+                if (!banker.ifCalling && !south.ifCalling && !west.ifCalling) {
                     north.abandonCardAI();
                     String n_abandoned = north.abandonArea.get(north.abandonArea.size()-1);
+                    boolean ifButtonPressed = true;
                     Tools tools = new Tools();
                     int result = tools.countListRepeatedStrings(banker.owned, n_abandoned);
 
                     if (result == 2){
-                        boolean ifButtonPressed = true;
-                        String ref_n;
                         int jop = JOptionPane.showConfirmDialog(null,"是否碰牌："+n_abandoned,"碰牌提示",
                                 JOptionPane.YES_NO_CANCEL_OPTION);
                         if (jop == 0){
+                            do {
+                                for (JButton jButton : buttonArr) {
+                                    if (jButton.getModel().isArmed()) {
+                                        ref = jButton.getText();
+                                        panel.removeAll();
+                                        panel.updateUI();
+                                        jf.repaint();
+                                        ifButtonPressed = false;
+                                        System.out.println(",,,,");
+                                        break;
+                                    }
+                                }
+
+                            } while (ifButtonPressed);
                             banker.pengCalling(n_abandoned);
-                            banker.loopCalling = false;
-                            panel.updateUI();
+                            banker.abandonCard(ref);
                         }
-                        else {
-                            panel.updateUI();
+                        else if (jop == 1 || jop == 2){
+                            do {
+                                for (JButton jButton : buttonArr) {
+                                    if (jButton.getModel().isArmed()) {
+                                        ref = jButton.getText();
+                                        panel.removeAll();
+                                        panel.updateUI();
+                                        jf.repaint();
+                                        ifButtonPressed = false;
+                                        break;
+                                    }
+                                }
+                            } while (ifButtonPressed);
+                            banker.abandonCard(ref);
                         }
-
-                    }
-                    else if (result > 2 && banker.owned.contains(n_abandoned))
-                    {
-                        Object[] options = {"碰","杠","和","跳过"};
-                        int jop = JOptionPane.showOptionDialog(null,"是否鸣牌："+n_abandoned,
-                                "碰杠和提示", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,
-                                null,options, options[0]);
-
-                        if (jop == 0){
-                            panel.updateUI();
-                            banker.pengCalling(n_abandoned);
-                            banker.loopCalling = false;
-
-                        }
-                        else if (jop == 1) {
-                            banker.gangCalling(n_abandoned);
-                            panel.updateUI();
-                        }
-                        else if (jop == 2) {
-                            banker.playing = false;
-                        }
-                        else {
-                            panel.updateUI();
-                        }
+                        jf.setSize(d2);
+                        jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                        jf.setLocation(100, 100);
+                        jf.setVisible(true);
+                        jf.remove(label);
                     }
                 }
-                north.ifCalling = false;
-            }
+                south.cardCallingAI();
+                west.cardCallingAI();
+                north.cardCallingAI();
+                System.out.println("北家已出牌");
 
+            }
             panel.updateUI();
             jf.repaint();
             AgariBacktrack agari = new AgariBacktrack();
             Rules rules = new Rules();
 
-            ArrayList<String> hai = new ArrayList<>(banker.owned);
-            //int[] testhai = {7, 8, 9, 10, 11, 12, 17, 18, 19, 22, 22, 25, 26, 27};
-
-            if (banker.peng.size() > 0) {
-                for (String each : banker.peng) {
-                    hai.add(each.substring(0, 2));
-                    hai.add(each.substring(0, 2));
-                    hai.add(each.substring(0, 2));
-                }
-            }
-            if (banker.gang.size() > 0){
-                for (String each : banker.gang) {
-                    hai.add(each.substring(0,2));
-                    hai.add(each.substring(0,2));
-                    hai.add(each.substring(0,2));
-                }
-            }
-
-            System.out.println(hai);
-            int[] cards = rules.mappingHai(hai);
-            agari.normal(cards,banker.owned, banker.peng, banker.gang);
+            int[] testhai = {7, 8, 9, 10, 11, 12, 17, 18, 19, 22, 22, 25, 26, 27};
+            //int[] hai = rules.normal(banker.owned, null,null);
+            System.out.println(banker.owned);
+            int[] cards = rules.mappingHai(banker.owned);
+            agari.normal(cards,banker.owned);
             boolean isWin = true;
 
             if (agari.winNum == 5 || agari.winNum == 10 || agari.winNum == 30) {
@@ -686,11 +630,9 @@ public class String_Mahjong {
                 panel.add(jl, BorderLayout.CENTER);
                 panel.add(restart,BorderLayout.SOUTH);
                 boolean loop = true;
-                panel.updateUI();
-                jf.repaint();
 
                 do {
-                    if (restart.getModel().isPressed()) {
+                    if (restart.getModel().isArmed()) {
                         restartGame = true;
                         panel.removeAll();
                         panel.updateUI();

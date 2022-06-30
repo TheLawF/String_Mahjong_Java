@@ -29,6 +29,12 @@ public class Rules {
     boolean bloom = false;
     boolean toSpring = false;
     boolean salvage = false;
+    boolean side = false;
+    boolean between = false;
+    boolean only = false;
+    boolean last = false;
+    String sideWind = "";
+    String seatWind = "";
 
     final String[] alones = {"🀐","🀘","🀇","🀏","🀙","🀡","🀀","🀁","🀂","🀃","🀄","🀅","🀆"};
     final String[][] lantern = {{"🀇", "🀇", "🀇", "🀈", "🀉", "🀊", "🀋", "🀌", "🀍", "🀎", "🀏", "🀏", "🀏"},
@@ -139,13 +145,17 @@ public class Rules {
 
     public boolean isToSpring(boolean toSpring){
         this.toSpring = toSpring;
-        return toSpring;
+        return this.toSpring;
     }
 
     public boolean isSalvage(boolean salvage){
         this.salvage = salvage;
-        return salvage;
+        return this.salvage;
     }
 
+    public boolean isSide(boolean side){
+        this.side = side;
+        return this.side;
+    }
 
 }

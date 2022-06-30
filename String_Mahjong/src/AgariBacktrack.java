@@ -1,13 +1,13 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
 public class AgariBacktrack {
 
-    // 问题在于保证风牌->箭牌->万字->条字->筒字，而这里显然不对
+    // Rules.java里面的 mappingHai()方法将会把玩家的手牌映射为如下的整型静态常量，以方便
+    // 这里的代码进行判断。
     static final int MAN = 0;
     static final int MAN1 = 0;
     static final int MAN2 = 1;
@@ -145,7 +145,8 @@ public class AgariBacktrack {
     }
 
 
-    public void normal(int[] hai, ArrayList<String> strHai) {
+    public void normal(int[] hai, ArrayList<String> strHai, ArrayList<String> strPeng,
+                       ArrayList<String> strgang) {
 
         /*hai = new int[]{MAN1, MAN1, MAN1,
                 MAN2, MAN3, MAN4,
@@ -174,6 +175,14 @@ public class AgariBacktrack {
         boolean isSalvage = rules.salvage;
         boolean isToSping = rules.toSpring;
         boolean isBloomed = rules.bloom;
+        boolean isSided = rules.side;
+
+        String sideWind = "";
+        String seatWind = "";
+
+        String[] chi = new String[4];
+        ArrayList<String> peng = new ArrayList<>(strPeng);
+        ArrayList<String> gang = new ArrayList<>(strgang);
 
         String mahjongData_1 = "";
         String mahjongData_2 = "";
@@ -206,6 +215,7 @@ public class AgariBacktrack {
         }
 
         try {
+            // 在这里将玩家手牌写入文本文档 mahjong_data.txt
             BufferedWriter txt = new BufferedWriter(new FileWriter("mahjong_data.txt"));
             txt.write("[");
             for (int i = 0; i < strHai.size();i++){
@@ -218,6 +228,7 @@ public class AgariBacktrack {
             }
             txt.write("]\n");
 
+            // 在这里将玩家的手牌组合写入文本文档
             txt.write("[");
             for (int i = 0; i < result.length; i++){
                 if (i < result.length-1) {
@@ -229,20 +240,50 @@ public class AgariBacktrack {
             }
             txt.write("]\n");
 
+            // 在这里将玩家的碰牌写入文本文档
+            txt.write("[");
+            for (int i = 0; i < peng.size(); i++) {
+                if (i < peng.size()-1) {
+                    txt.write("\""+peng.get(i)+"\",");
+                }
+                else {
+                    txt.write("\""+peng.get(i)+"\"");
+                }
+            }
+            txt.write("]\n");
+
+            // 在这里将玩家的杠牌写入文本文档
+            txt.write("[");
+            for (int i = 0; i < gang.size(); i++) {
+                if (i < peng.size()-1) {
+                    txt.write("\""+gang.get(i)+"\",");
+                }
+                else {
+                    txt.write("\""+gang.get(i)+"\"");
+                }
+            }
+            txt.write("]\n");
+
             txt.write(mahjongData_1);
             txt.write(mahjongData_2);
             txt.write(mahjongData_3);
             txt.write(mahjongData_4);
             txt.close();
 
-            BufferedWriter chars = new BufferedWriter(new FileWriter("mahjong_text.txt"));
+            // 将每次的和牌追加写入"mahjong_text.txt"的末尾。
+            BufferedWriter chars = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream("mahjong_text.txt",true)));
 
-            chars.write(String.valueOf(strHai));
-            chars.write(Arrays.toString(result));
-            chars.write("自摸=" + isZimo);
-            chars.write("海底捞月=" + isSalvage);
-            chars.write("妙手回春" + isToSping);
-            chars.write("杠上开花" + isBloomed);
+            chars.write(MessageFormat.format("{0}; ", String.valueOf(strHai)));
+            chars.write(Arrays.toString(result) + "; ");
+            chars.write("碰="+peng);
+            chars.write("杠="+gang);
+
+            chars.write("自摸=" + isZimo + "; ");
+            chars.write("海底捞月=" + isSalvage + "; ");
+            chars.write("妙手回春=" + isToSping + "; ");
+            chars.write("杠上开花=" + isBloomed + "; \n\n");
+            chars.close();
 
         }catch (IOException ignored){
         }
