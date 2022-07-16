@@ -7,7 +7,9 @@
 
   
 ## 2022/7/16更新：  
-去这个：[GL-MahjongTile (麻雀牌) _ フリーフォントまとめ](https://www.fontmatome.com/gl-mahjongtile/) 网站上找了一个开源的麻将字体。
+去这个：[GL-MahjongTile (麻雀牌) _ フリーフォントまとめ](https://www.fontmatome.com/gl-mahjongtile/) 网站上找了一个开源的麻将字体。  
+
+
 
 String mahjong game, but a Java and visualized version.    
 
