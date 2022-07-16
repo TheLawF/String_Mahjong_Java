@@ -3,6 +3,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class AgariBacktrack {
 
@@ -144,18 +145,17 @@ public class AgariBacktrack {
         return ret;
     }
 
-
+    // 注意：这个 String card 如果是点和，那么要让 banker.get等于点和的那张牌
     public void normal(int[] hai, ArrayList<String> strHai, ArrayList<String> strPeng,
-                       ArrayList<String> strgang) {
+                       ArrayList<String> strgang, String card, boolean ziMo,
+                       boolean strSalve, boolean strSpring, boolean strBloom) {
 
         /*hai = new int[]{MAN1, MAN1, MAN1,
                 MAN2, MAN3, MAN4,
                 MAN6, MAN7, MAN8,
                 TON, TON, TON,
                 SHA, SHA};
-
          */
-
 
         int[] n = null;
         List<Integer[][]> ret = null;
@@ -171,47 +171,89 @@ public class AgariBacktrack {
         String[] triplets = rules.triplets;
         String[] flushes = rules.flushes;
 
-        boolean isZimo = rules.zimo;
-        boolean isSalvage = rules.salvage;
-        boolean isToSping = rules.toSpring;
-        boolean isBloomed = rules.bloom;
         boolean isSided = rules.side;
+        boolean isSingle = rules.single;
+        boolean isBetween = rules.between;
 
-        String sideWind = "";
-        String seatWind = "";
+        String roundWind = rules.roundWind;
+        String seatWind = rules.seatWind;
+        System.out.println(Arrays.toString(result));
+
+        ArrayList<String> list = new ArrayList<>(Arrays.asList(result));
+        if (Objects.equals(card,result[0])) {
+            isSingle = true;
+        }
+        for (int i = 0; i < result.length; i++) {
+            if (i > 0 && Objects.equals(card, result[i].substring(0, 2)) &&
+                    !Objects.equals(result[i].substring(0,2),result[i].substring(2,4))) {
+                isSided = true;
+            }
+            else if (i > 0 && Objects.equals(card, result[i].substring(2, 4)) &&
+                    !Objects.equals(result[i].substring(0,2),result[i].substring(2,4))) {
+                isBetween = true;
+            }
+            else if (i > 0 && Objects.equals(card, result[i].substring(4, 6)) &&
+                    !Objects.equals(result[i].substring(0,2),result[i].substring(2,4))) {
+                isSided = true;
+            }
+            else {
+                break;
+            }
+        }
 
         String[] chi = new String[4];
         ArrayList<String> peng = new ArrayList<>(strPeng);
         ArrayList<String> gang = new ArrayList<>(strgang);
 
-        String mahjongData_1 = "";
-        String mahjongData_2 = "";
-        String mahjongData_3 = "";
-        String mahjongData_4 = "";
+        String dataZimo;
+        String dataSalve;
+        String dataSpring;
+        String dataBloom;
+        String dataSide;
+        String dataSingle;
+        String dataBetween;
 
-        if (isZimo) {
-            mahjongData_1 = "True\n";
+        if (ziMo) {
+            dataZimo = "True\n";
         }
         else {
-            mahjongData_1 = "False\n";
+            dataZimo = "False\n";
         }
-        if (isSalvage){
-            mahjongData_2 = "True\n";
-        }
-        else {
-            mahjongData_2 = "False\n";
-        }
-        if (isToSping) {
-            mahjongData_3 = "True\n";
+        if (strSalve){
+            dataSalve = "True\n";
         }
         else {
-            mahjongData_3 = "False\n";
+            dataSalve = "False\n";
         }
-        if (isBloomed){
-            mahjongData_4 = "True\n";
+        if (strSpring) {
+            dataSpring = "True\n";
         }
         else {
-            mahjongData_4 = "False\n";
+            dataSpring = "False\n";
+        }
+        if (strBloom){
+            dataBloom = "True\n";
+        }
+        else {
+            dataBloom = "False\n";
+        }
+        if (isSided){
+            dataSide = "True\n";
+        }
+        else {
+            dataSide = "False\n";
+        }
+        if (isSingle){
+            dataSingle = "True\n";
+        }
+        else {
+            dataSingle = "False\n";
+        }
+        if (isBetween){
+            dataBetween = "True\n";
+        }
+        else {
+            dataBetween = "False\n";
         }
 
         try {
@@ -264,10 +306,17 @@ public class AgariBacktrack {
             }
             txt.write("]\n");
 
-            txt.write(mahjongData_1);
-            txt.write(mahjongData_2);
-            txt.write(mahjongData_3);
-            txt.write(mahjongData_4);
+            txt.write(dataZimo);
+            txt.write(dataSalve);
+            txt.write(dataSpring);
+            txt.write(dataBloom);
+
+            txt.write(dataSide);
+            txt.write(dataBetween);
+            txt.write(dataSingle);
+
+            txt.write("\"" + roundWind + "\"\n");
+            txt.write("\"" + seatWind + "\"\n");
             txt.close();
 
             // 将每次的和牌追加写入"mahjong_text.txt"的末尾。
@@ -276,13 +325,20 @@ public class AgariBacktrack {
 
             chars.write(MessageFormat.format("{0}; ", String.valueOf(strHai)));
             chars.write(Arrays.toString(result) + "; ");
-            chars.write("碰="+peng);
-            chars.write("杠="+gang);
+            chars.write("碰="+peng + "; ");
+            chars.write("杠="+gang + "; ");
 
-            chars.write("自摸=" + isZimo + "; ");
-            chars.write("海底捞月=" + isSalvage + "; ");
-            chars.write("妙手回春=" + isToSping + "; ");
-            chars.write("杠上开花=" + isBloomed + "; \n\n");
+            chars.write("自摸=" + ziMo + "; ");
+            chars.write("海底捞月=" + strSalve + "; ");
+            chars.write("妙手回春=" + strSpring + "; ");
+            chars.write("杠上开花=" + strBloom + "; ");
+
+            chars.write("边张=" + isSided + "-" + card + "; ");
+            chars.write("坎张=" + isBetween + "-" + card + "; ");
+            chars.write("单钓=" + isSingle + "-" + card + "; ");
+
+            chars.write("圈风=" + roundWind + "; ");
+            chars.write("门风=" + seatWind + "; \n\n");
             chars.close();
 
         }catch (IOException ignored){

@@ -1,10 +1,38 @@
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Tools {
 
     String key = "";
     int result = 0;
+    File file;
+    Font type;
+
+    public Tools(){
+
+    }
+
+    public Font setTypeFont(){
+        file = new File("GL-MahjongTile.ttf");
+
+        try {
+            FileInputStream fi = new FileInputStream(file);
+            BufferedInputStream bis = new BufferedInputStream(fi);
+            this.type = Font.createFont(Font.TRUETYPE_FONT, bis);
+            this.type.deriveFont(Font.PLAIN, 38);
+            GraphicsEnvironment ge = GraphicsEnvironment.
+                    getLocalGraphicsEnvironment();
+            ge.registerFont(this.type);
+        }catch (Exception e) {
+        }
+        return this.type;
+    }
 
     // 这个方法用于判断传入的列表 list中是否存在着多个重复的字符串元素 s
     public int countListRepeatedStrings (List<String> list,String element)

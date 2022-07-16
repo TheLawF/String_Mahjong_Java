@@ -25,16 +25,16 @@ public class Rules {
     String[] triplets = new String[5];
     String[] flushes = new String[5];
 
-    boolean zimo = false;
-    boolean bloom = false;
-    boolean toSpring = false;
-    boolean salvage = false;
-    boolean side = false;
-    boolean between = false;
-    boolean only = false;
-    boolean last = false;
-    String sideWind = "";
-    String seatWind = "";
+    boolean zimo = false;      // 自摸
+    boolean bloom = false;     // 杠上花
+    boolean toSpring = false;  // 妙手回春
+    boolean salvage = false;   // 海底捞
+    boolean side = false;      // 边张
+    boolean between = false;   // 坎张
+    boolean single = false;    // 单钓
+    boolean last = false;      // 绝张
+    String roundWind = "🀀";    // 圈风
+    String seatWind = "🀀";     // 门风
 
     final String[] alones = {"🀐","🀘","🀇","🀏","🀙","🀡","🀀","🀁","🀂","🀃","🀄","🀅","🀆"};
     final String[][] lantern = {{"🀇", "🀇", "🀇", "🀈", "🀉", "🀊", "🀋", "🀌", "🀍", "🀎", "🀏", "🀏", "🀏"},
@@ -129,7 +129,6 @@ public class Rules {
                 result[iterTimes + i + 1] = flushes[i];
             }
         }
-        System.out.println(Arrays.toString(result));
         return result;
     }
 

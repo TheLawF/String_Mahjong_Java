@@ -109,6 +109,7 @@ public class Banker extends Players
         this.owned.remove(get);
         this.owned.remove(get);
         this.owned.remove(get);
+        this.owned.remove(get);
         this.gangLoop = false;
 
     }
@@ -231,25 +232,6 @@ public class Banker extends Players
         int num = 0;
         String[] arr = keycode.split(",");
         System.out.println(Arrays.toString(arr));
-        /*
-        if (Objects.equals(txt,"l"))
-        {
-            for (String each : arr) {
-                if(codeList.contains(each)){
-                    num += 1;
-                }
-                else
-                {
-                    try {
-                        throw new ElementNotInListException(){};
-                    } catch (ElementNotInListException e) {
-                        e.printStackTrace();
-                        System.out.println("Element" + each + "not in list \""+codeList+"\"");
-                    }
-                }
-            }
-        }
-         */
 
         /* 将输入的字符串input转化为数组arr，再用arr的每个元素映射codeList的每个元素
         如果映射成功则为result列表内添加cardList相应的索引所对应的元素

@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -12,7 +15,7 @@ public class String_Mahjong {
 
     public String_Mahjong(List wall) {
         this.wall = wall;
-        //this.all_cards = all_cards;
+
     }
 
     public void clickConfirmButton()
@@ -53,12 +56,33 @@ public class String_Mahjong {
         Font type2 = new Font("黑体", Font.BOLD, 40);
         Font type3 = new Font("思源宋体", Font.BOLD, 80);
 
+        File file = new File("fonts\\GL-MahjongTile.ttf");
+        Font type = null;
+
+        try {
+            FileInputStream fi = new FileInputStream(file);
+            BufferedInputStream bis = new BufferedInputStream(fi);
+            type = Font.createFont(Font.TRUETYPE_FONT, bis);
+            type.deriveFont(Font.PLAIN, 38);
+            GraphicsEnvironment ge = GraphicsEnvironment.
+                    getLocalGraphicsEnvironment();
+            ge.registerFont(type);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Font type4 = new Font("GL-MahjongTile Regular",Font.PLAIN,45);
+
         jf.setSize(d2);
         jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jf.setLocation(100, 100);
         jf.setVisible(true);
 
-        String card = " ";
+        String cardGet = " ";
+        boolean zimo = true;
+        boolean salvage = false;
+        boolean spring = false;
+        boolean bloom = false;
         //游戏最大的循环——重新开始游戏的循环在代码主体最前端进行。
         //The largest loop -- restart loop begins here.
         do {
@@ -95,7 +119,7 @@ public class String_Mahjong {
 
             /* 从这里到游戏主循环之前是为玩家配牌的代码，先为自摸墙创建四个sublist，然后将玩家类中的手牌数组转化为列表后对其进行赋值
             将sublist的值赋给手牌列表。
-            From here to the main loop of the game is the card allocation for
+            From here to the main loop of the game is the cardGet allocation for
             each player. First create 4 sublists from wall, and assign the
             value of each sublist to the player.owned lists.
             */
@@ -138,7 +162,7 @@ public class String_Mahjong {
             Program will print the banker.owned list and a tip reads "input
             please: " on the command table . Player can input the number from
             0 to 13 to access the index of this "banker.owned" list to abandon
-            the card through this index. This loop can also be called as the loop
+            the cardGet through this index. This loop can also be called as the loop
             of button-creating loop or string-updating loop.
              */
 
@@ -149,10 +173,14 @@ public class String_Mahjong {
                 round += 1;
                 System.out.printf("第%d轮，自摸墙上剩余%d张\r\n", round, wall.size());
 
-                JTextArea area = new JTextArea(banker.owned.toString());    // 文本显示
+                String cardText = "";
+                for (String each : banker.owned) {
+                    cardText += each;
+                }
+                JTextArea area = new JTextArea(cardText);    // 文本显示
                 ArrayList<String> list = banker.owned;
 
-                area.setFont(type1);
+                area.setFont(type4);
                 area.setForeground(Color.BLUE);
                 panel.add(area, new FlowLayout());
 
@@ -166,6 +194,7 @@ public class String_Mahjong {
                 String[] commandArr = {"碰", "杠", "和", "跳过", "开挂", "确认"};
                 List<String> cmdList = Arrays.asList(commandArr);
                 jf.add(label, BorderLayout.NORTH);
+                jf.validate();
 
                 winButton.setFont(type2);
                 winButton.setForeground(new Color(250, 210, 0));
@@ -243,14 +272,14 @@ public class String_Mahjong {
                     jf.repaint();
                 });
 
-                get : while (banker.loopCalling) {
+                get : while (banker.loopCalling && wall.size() > 0) {
                     /* 鸣牌循环内嵌套的while循环叫做“玩家暗杠循环”，在这个循环中将会循环
                     判定玩家的摸牌和暗杠，如果玩家暗杠则continue到暗杠循环开头部分再摸一张，
                     否则跳出暗杠循环，进入别家鸣牌判定代码块。
                     【玩家暗杠由玩家内部的 gangLoop 变量进行判断】
                     */
                     banker.getCard(wall, banker.owned);
-                    card = banker.getName(wall, banker.owned);
+                    cardGet = banker.getName(wall, banker.owned);
 
                     Tools tools = new Tools();
                     int result;
@@ -261,6 +290,7 @@ public class String_Mahjong {
                         for (String str : banker.peng) {
                             if (Objects.equals(str.substring(0, 1), each)) {
                                 isPlus = true;
+                                panel.updateUI();
                                 break;
                             }
                         }
@@ -270,6 +300,7 @@ public class String_Mahjong {
                                     "杠牌提示",JOptionPane.YES_NO_CANCEL_OPTION);
                             if (jop == 0) {
                                 banker.anGangCalling(each);
+                                panel.updateUI();
                                 continue get;
                             }
                             else {
@@ -281,13 +312,16 @@ public class String_Mahjong {
                                     "杠牌提示",JOptionPane.YES_NO_CANCEL_OPTION);
                             if (jop == 0) {
                                 banker.gangPlus(each);
+                                panel.updateUI();
                                 continue get;
                             }
                             else {
+                                panel.updateUI();
                                 break;
                             }
                         }
                     }
+                    panel.updateUI();
 
                     if (!banker.gangLoop) {
                         // System.out.println("gangloop?");
@@ -301,7 +335,7 @@ public class String_Mahjong {
                 for (int i = 0; i < banker.owned.size(); i++) {
                     buttonArr[i] = new JButton(banker.owned.get(i));
                     buttonArr[i].setText(banker.owned.get(i));
-                    buttonArr[i].setFont(type1);
+                    buttonArr[i].setFont(type4);
                     buttonArr[i].setForeground(Color.BLUE);
                     int num = i;
                     buttonArr[i].setEnabled(true);
@@ -443,7 +477,7 @@ public class String_Mahjong {
                 south.loopCalling = true;
 
                 txt = " ";
-                if (!banker.ifCalling && !west.ifCalling && !north.ifCalling) {
+                if (!banker.ifCalling && !west.ifCalling && !north.ifCalling && wall.size() > 0) {
                     // 南家弃牌
                     south.abandonCardAI();
                     String s_abandoned = south.abandonArea.get(south.abandonArea.size() - 1);
@@ -499,6 +533,7 @@ public class String_Mahjong {
                             north.ifCalling = true;
                         }
                         else if (jop == 2) {
+                            zimo = false;
                             banker.playing = false;
                             west.loopCalling = false;
                             west.ifCalling = true;
@@ -514,7 +549,7 @@ public class String_Mahjong {
                 south.ifCalling = false;
 
                 // 西家的鸣牌循环
-                while (west.loopCalling) {
+                while (west.loopCalling && wall.size() > 0) {
                     west.getCardAI(wall, west.owned);
 
                     if (!west.gangLoop) {
@@ -543,7 +578,6 @@ public class String_Mahjong {
                             north.ifCalling = true;
                         }
 
-
                     }else if (result > 2 && banker.owned.contains(w_abandoned))
                     {
                         Object[] options = {"碰","杠","和","跳过"};
@@ -566,6 +600,7 @@ public class String_Mahjong {
                             north.ifCalling = true;
                         }
                         else if (jop == 2) {
+                            zimo = false;
                             banker.playing = false;
                             north.loopCalling = false;
                             north.ifCalling = true;
@@ -575,13 +610,11 @@ public class String_Mahjong {
                         }
                     }
 
-                    // banker.cardCalling(w_abandoned, String.valueOf(command));
-
                 }
                 west.ifCalling = false;
 
                 // 北家的鸣牌循环
-                while (north.loopCalling) {
+                while (north.loopCalling && wall.size() > 0) {
                     north.getCard(wall, north.owned);
 
                     if (!north.gangLoop) {
@@ -629,6 +662,7 @@ public class String_Mahjong {
                             panel.updateUI();
                         }
                         else if (jop == 2) {
+                            zimo = false;
                             banker.playing = false;
                         }
                         else {
@@ -656,15 +690,23 @@ public class String_Mahjong {
             }
             if (banker.gang.size() > 0){
                 for (String each : banker.gang) {
-                    hai.add(each.substring(0,2));
-                    hai.add(each.substring(0,2));
-                    hai.add(each.substring(0,2));
+                    hai.add(each.substring(2,4));
+                    hai.add(each.substring(2,4));
+                    hai.add(each.substring(2,4));
                 }
+            }
+
+            if (wall.size() == 0 && zimo) {
+                salvage = true;
+            }
+            else if (wall.size() == 0 && !zimo) {
+                spring = true;
             }
 
             System.out.println(hai);
             int[] cards = rules.mappingHai(hai);
-            agari.normal(cards,banker.owned, banker.peng, banker.gang);
+            agari.normal(cards,banker.owned, banker.peng, banker.gang,
+                    cardGet,zimo,salvage,spring,bloom);
             boolean isWin = true;
 
             if (agari.winNum == 5 || agari.winNum == 10 || agari.winNum == 30) {
@@ -701,9 +743,8 @@ public class String_Mahjong {
 
                 }while (loop);
             }
-            // else if () {
-            //
-            //}
+            /* else if () {}
+            */
             else {
                 System.out.println("你在做甚麽");
                 jf.setSize(d2);
