@@ -5,6 +5,10 @@
 —— F定律   
 
 
+  
+## 2022/7/16更新：  
+去这个：[GL-MahjongTile (麻雀牌) _ フリーフォントまとめ](https://www.fontmatome.com/gl-mahjongtile/) 网站上找了一个开源的麻将字体。
+
 String mahjong game, but a Java and visualized version.    
 
 I have been looking for the algorithm of checking the victory of mahjong game in Java version, just becuase I don't want to repeat the same teadious thing. At last, I found it on the blog with the website [麻雀 和了判定（役の判定） アルゴリズム 最終更新日：2008/4/9](http://hp.vector.co.jp/authors/VA046927/mjscore/) like digging the tomb. Thanks for the author of this blog -- 山岡忠夫さん who provided this kind of way using seperation algorithm to measure the yakus. I hope the spirit of Internet in the new ages will be there to guide our steps.
