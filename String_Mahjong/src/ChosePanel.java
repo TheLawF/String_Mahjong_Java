@@ -40,23 +40,20 @@ public class ChosePanel extends JFrame {
         this.setVisible(true);
         this.repaint();
 
-        submit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (optA.isSelected()){
+        submit.addActionListener(e -> {
+            if (optA.isSelected()){
 
-                }
-                else if (optB.isSelected()){
+            }
+            else if (optB.isSelected()){
 
-                }
-                else if (optC.isSelected()){
+            }
+            else if (optC.isSelected()){
 
-                }
-                else if (optD.isSelected()){
+            }
+            else if (optD.isSelected()){
 
-                }else {
+            }else {
 
-                }
             }
         });
     }
